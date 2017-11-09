@@ -1,0 +1,6 @@
+echo "# Problem-Solving-with-Algorithms-and-Data-Structures-using-Python-Bradley-N.Miller-" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/S4t0r1/Problem-Solving-with-Algorithms-and-Data-Structures-using-Python-Bradley-N.Miller-.git
+git push -u origin maste
