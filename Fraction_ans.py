@@ -24,17 +24,20 @@ class Fraction:
             print(err)
             sys.exit(2)
         else:
-            common = gcd(top, bottom) # Excercise 2
-            self.num = top // common   # Excercise 2
-            self.den = bottom // common  # Excercise 2
+            self.common = gcd(top, bottom) # Excercise 2
+            self.num = top // self.common   # Excercise 2
+            self.den = bottom // self.common  # Excercise 2
         # ..} Excercise 5
     
     def __str__(self):
-        return str(self.num) + "/" + str(self.den)
+        common = gcd(self.num, self.den)
+        return str(self.num // common) + "/" + str(self.den // common)
     
     # Excercise 9 {..
     def __repr__(self):
         class_name = self.__class__.__name__
+        common = gcd(self.num, self.den)
+        self.num, self.den = (self.num // common), (self.den // common)
         return "{0}({self.num}, {self.den})".format(class_name, **locals())
     # ..} Excercise 9 
     
@@ -129,3 +132,4 @@ test2 = Fraction(1, 3)
 print(str(test2))
 print(test.__iadd__(test2))
 print(repr(test))
+print(str(test))
