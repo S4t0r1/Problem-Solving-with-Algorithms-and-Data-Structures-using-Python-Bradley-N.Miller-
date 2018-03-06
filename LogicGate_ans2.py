@@ -117,10 +117,8 @@ class Half_adder(BinaryGate):
     def performGateLogic(self):
         a = self.getPinA()
         b = self.getPinB()
-        if a == 1 and b == 1:
-            self.cout = 1
-        if a != b:
-            self.summ = 1
+        self.cout = 1 if (a == 1 and b == 1) else 0
+        self.summ = 1 if (a != b) else 0
         return self.summ, self.cout
 # ..} Excercise 11
 
