@@ -53,9 +53,9 @@ class AndGate(BinaryGate):
         BinaryGate.__init__(self, n)
     
     
-    def performGateLogic(self):
-        a = self.getPinA()
-        b = self.getPinB()
+    def performGateLogic(self, pinA=None, pinB=None):
+        a = pinA if pinA is not None else self.getPinA()
+        b = pinB if pinB is not None else self.getPinB()
         if a == 1 and b == 1:
             return 1
         else:
@@ -77,9 +77,9 @@ class OrGate(BinaryGate):
         BinaryGate.__init__(self, n)
     
     
-    def performGateLogic(self):
-        a = self.getPinA()
-        b = self.getPinB()
+    def performGateLogic(self, pinA=None, pinB=None):
+        a = pinA if pinA is not None else self.getPinA()
+        b = pinB if pinB is not None else self.getPinB()
         if a == 1 or b == 1:
             return 1
         else:
@@ -98,29 +98,15 @@ class NorGate(OrGate):
 # Excercise 10 {..
 class XorGate(OrGate):
     
-    def performGateLogic(self):
-        if (self.getPinA() + self.getPinB()) % 2 != 0:
+    def performGateLogic(self, pinA=None, pinB=None):
+        a = pinA if pinA is not None else self.getPinA()
+        b = pinB if pinB is not None else self.getPinB()
+        if a != b:
             return 1
         else:
             return 0
 # ..} Excercise 10
 
-
-# Excercise 11 {..
-class Half_adder(BinaryGate):
-    def __init__(self, n):
-        BinaryGate.__init__(self, n)
-        
-        self.summ = 0
-        self.cout = 0
-    
-    def performGateLogic(self):
-        a = self.getPinA()
-        b = self.getPinB()
-        self.cout = 1 if (a == 1 and b == 1) else 0
-        self.summ = 1 if (a != b) else 0
-        return self.summ, self.cout
-# ..} Excercise 11
 
 
 class UnaryGate(LogicGate):
@@ -175,9 +161,27 @@ class Connector(object):
         return self.togate
 
 
+class Halfadder(BinaryGate):
+    
+    def __init__(self, n):
+        BinaryGate.__init__(self, n)
+        self.summ = 0
+        self.carry = 0
+    
+    def compute_values(self):
+        a = self.getPinA()
+        b = self.getPinB()
+        self.summ = 1 if XorGate.performGateLogic(self, pinA=a, pinB=b) == 1 else 0
+        self.carry = 1 if AndGate.performGateLogic(self, pinA=a, pinB=b) == 1 else 0
+        return self.carry, self.summ
+
 
 def main():
-    g1 = Half_adder("G1")
-    print(g1.getOutput())
+    g1 = Halfadder("H1")
+    print(g1.compute_values())
+    g2 = AndGate("G2")
+    print(g2.getOutput())
+    g3 = NotGate("G3")
+    print(g3.getOutput())
 
 main()
