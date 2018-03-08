@@ -120,11 +120,11 @@ class Half_adder(BinaryGate):
         while counter < 8:
             a = self.getPinA()
             b = self.getPinB()
-            self.cout = 1 if (sum((a, b)) == 2) else 0
+            c = self.getPinA()
+            self.cout = 1 if (sum((a, b) or (b, c) or (a, c)) == 2) else 0
             self.summ = 1 if (sum((a, b, c)) % 2 != 0) else 0
             print("cin = {c} | cout = {self.cout} | sum = {self.summ}"
                                                   .format(**locals()))
-            c = self.cout
             counter += 1
         return self.cout, self.summ
 # ..} Excercise 11
