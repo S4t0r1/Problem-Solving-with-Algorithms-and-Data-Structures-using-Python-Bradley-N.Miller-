@@ -167,8 +167,8 @@ class Halfadder(BinaryGate):
     def compute_values(self):
         a = str(self.getPinA())
         b = str(self.getPinB())
-        self.summ = 1 if (XorGate.performGateLogic(self, pinA=a, pinB=b) == 1) else 0
-        self.carry = 1 if (AndGate.performGateLogic(self, pinA=a, pinB=b) == 1) else 0
+        self.summ = 1 if XorGate.performGateLogic(self, pinA=a, pinB=b) else 0
+        self.carry = 1 if AndGate.performGateLogic(self, pinA=a, pinB=b) else 0
         return self.carry, self.summ
 # ..} Excercise 11
 
