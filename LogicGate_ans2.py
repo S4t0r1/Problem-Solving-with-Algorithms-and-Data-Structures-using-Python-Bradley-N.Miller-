@@ -54,9 +54,9 @@ class AndGate(BinaryGate):
     
     
     def performGateLogic(self, pinA=None, pinB=None):
-        a = pinA if (pinA is not None) else self.getPinA()
-        b = pinB if (pinB is not None) else self.getPinB()
-        if a == 1 and b == 1:
+        a = pinA or self.getPinA()
+        b = pinB or self.getPinB()
+        if int(a) == 1 and int(b) == 1:
             return 1
         else:
             return 0
@@ -78,9 +78,9 @@ class OrGate(BinaryGate):
     
     
     def performGateLogic(self, pinA=None, pinB=None):
-        a = pinA if (pinA is not None) else self.getPinA()
-        b = pinB if (pinB is not None) else self.getPinB()
-        if a == 1 or b == 1:
+        a = pinA or self.getPinA()
+        b = pinB or self.getPinB()
+        if int(a) == 1 or int(b) == 1:
             return 1
         else:
             return 0
@@ -99,8 +99,8 @@ class NorGate(OrGate):
 class XorGate(OrGate):
     
     def performGateLogic(self, pinA=None, pinB=None):
-        a = pinA if (pinA is not None) else self.getPinA()
-        b = pinB if (pinB is not None) else self.getPinB()
+        a = pinA or self.getPinA()
+        b = pinB or self.getPinB()
         return 1 if (a != b) else 0
 # ..} Excercise 10
 
@@ -158,19 +158,19 @@ class Connector(object):
         return self.togate
 
 
+# Excercise 11 {..
 class Halfadder(BinaryGate):
     
     def __init__(self, n):
         BinaryGate.__init__(self, n)
-        self.summ = 0
-        self.carry = 0
     
     def compute_values(self):
-        a = self.getPinA()
-        b = self.getPinB()
+        a = str(self.getPinA())
+        b = str(self.getPinB())
         self.summ = 1 if (XorGate.performGateLogic(self, pinA=a, pinB=b) == 1) else 0
         self.carry = 1 if (AndGate.performGateLogic(self, pinA=a, pinB=b) == 1) else 0
         return self.carry, self.summ
+# ..} Excercise 11
 
 
 def main():
@@ -180,5 +180,9 @@ def main():
     print(g2.getOutput())
     g3 = NotGate("G3")
     print(g3.getOutput())
+    g4 = OrGate("G4")
+    print(g4.getOutput())
+    g5 = XorGate("G5")
+    print(g5.getOutput())
 
 main()
