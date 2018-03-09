@@ -233,15 +233,20 @@ class Fulladder(Halfadder):
         print ("cin = {input_cin} | cout = {cout3} | sum = {summ2}".format(**locals()))
         return str(cout3), str(summ2)
 
+
+class N_bit_fulladder(Fulladder):
+    
+    def __init__(self, n):
+        Fulladder.__init__(self, n)
+    
+    def full_adders(self, n_bit_adder=1):
+        cin = 0
+        for i in range(n_bit_adder):
+            outputs = Fulladder("F").compute_values(cin)
+            cin = outputs[0] if i < 4 else 1
+
+
 def main():
-    f1 = Fulladder("F1").compute_values()
-    f2 = Fulladder("F2").compute_values(f1[0])
-    f3 = Fulladder("F3").compute_values(f2[0])
-    f4 = Fulladder("F4").compute_values(f3[0])
-    cin = f4[0]
-    f5 = Fulladder("F5").compute_values(cin)
-    f6 = Fulladder("F6").compute_values(cin)
-    f7 = Fulladder("F7").compute_values(cin)
-    f8 = Fulladder("F8").compute_values(cin)
+    f8 = N_bit_fulladder("N8").full_adders(8)
 
 main()
