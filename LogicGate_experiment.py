@@ -53,10 +53,10 @@ class AndGate(BinaryGate):
         BinaryGate.__init__(self, n)
     
     
-    def performGateLogic(self):
-        a = self.getPinA()
-        b = self.getPinB()
-        if a == 1 and b == 1:
+    def performGateLogic(self, pinA=None, pinB=None):
+        a = pinA or self.getPinA()
+        b = pinB or self.getPinB()
+        if int(a) == 1 and int(b) == 1:
             return 1
         else:
             return 0
@@ -77,10 +77,10 @@ class OrGate(BinaryGate):
         BinaryGate.__init__(self, n)
     
     
-    def performGateLogic(self):
-        a = self.getPinA()
-        b = self.getPinB()
-        if a == 1 or b == 1:
+    def performGateLogic(self, pinA=None, pinB=None):
+        a = pinA or self.getPinA()
+        b = pinB or self.getPinB()
+        if int(a) == 1 or int(b) == 1:
             return 1
         else:
             return 0
@@ -98,36 +98,12 @@ class NorGate(OrGate):
 # Excercise 10 {..
 class XorGate(OrGate):
     
-    def performGateLogic(self):
-        if (sum((self.getPinA(), self.getPinB()))) % 2 != 0:
-            return 1
-        else:
-            return 0
+    def performGateLogic(self, pinA=None, pinB=None):
+        a = pinA or self.getPinA()
+        b = pinB or self.getPinB()
+        return 1 if (a != b) else 0
 # ..} Excercise 10
 
-
-# Excercise 11 {..
-class Half_adder(BinaryGate):
-    def __init__(self, n):
-        BinaryGate.__init__(self, n)
-        
-        self.summ = 0
-        self.cout = 0
-    
-    def performGateLogic(self):
-        counter = 0
-        c = 0
-        while counter < 8:
-            a = self.getPinA()
-            b = self.getPinB()
-            c = self.getPinA()
-            self.cout = 1 if (sum((a, b) or (b, c) or (a, c)) == 2) else 0
-            self.summ = 1 if (sum((a, b, c)) % 2 != 0) else 0
-            print("cin = {c} | cout = {self.cout} | sum = {self.summ}"
-                                                  .format(**locals()))
-            counter += 1
-        return self.cout, self.summ
-# ..} Excercise 11
 
 
 class UnaryGate(LogicGate):
@@ -182,9 +158,26 @@ class Connector(object):
         return self.togate
 
 
+# Excercise 11 {..
+class Halfadder(BinaryGate):
+    
+    def __init__(self, n):
+        BinaryGate.__init__(self, n)
+    
+    def compute_values(self, inputSum=None, inputCin=None):
+        a = str(inputSum) if inputSum else str(self.getPinA())
+        b = str(inputCin) if inputCin else str(self.getPinB())
+        self.summ = 1 if XorGate.performGateLogic(self, pinA=a, pinB=b) else 0
+        self.carry = 1 if AndGate.performGateLogic(self, pinA=a, pinB=b) else 0
+        return str(self.carry), str(self.summ)
+# ..} Excercise 11
+
 
 def main():
-    g1 = Half_adder("G1")
-    print(g1.getOutput())
+    cout1, summ1 = Halfadder("H1").compute_values()
+    cout2, summ2 = Halfadder("H2").compute_values(summ1, cout1)
+    cout3 = OrGate("OR1").performGateLogic(pinA=cout1, pinB=cout2)
+    print ("cin = {cout1} | cout = {cout3} | sum = {summ2}".format(**locals()))
+    
 
 main()
