@@ -209,7 +209,7 @@ class Connector(object):
 # Excercise 11 {..
 class Halfadder(BinaryGate):
     
-    def __init__(self, n):
+    def __init__(self, n=""):
         BinaryGate.__init__(self, n)
     
     def compute_values(self, inputA=None, inputB=None):
@@ -226,13 +226,12 @@ class Fulladder(Halfadder):
     def __init__(self, n):
         Halfadder.__init__(self, n)
     
-    def compute_values(self, input_cin=0):
-        cout1, summ1 = Halfadder("H1").compute_values()
-        cout2, summ2 = Halfadder("H2").compute_values(summ1, input_cin)
+    def compute_output(self, input_cin=0, count=0):
+        cout1, summ1 = Halfadder("H{0}".format(count)).compute_values()
+        cout2, summ2 = Halfadder().compute_values(summ1, str(input_cin))
         cout3 = OrGate("OR1").performGateLogic(pinA=cout1, pinB=cout2)
         print ("cin = {input_cin} | cout = {cout3} | sum = {summ2}".format(**locals()))
         return str(cout3), str(summ2)
-
 
 class N_bit_fulladder(Fulladder):
     
@@ -242,7 +241,7 @@ class N_bit_fulladder(Fulladder):
     def full_adders(self, n_bit_adder=1):
         cin = 0
         for i in range(n_bit_adder):
-            outputs = Fulladder("F").compute_values(cin)
+            outputs = Fulladder("F").compute_output(cin, i)
             cin = outputs[0] if i < 4 else 1
 
 
