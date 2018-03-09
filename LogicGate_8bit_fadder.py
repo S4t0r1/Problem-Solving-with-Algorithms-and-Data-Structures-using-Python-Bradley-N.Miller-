@@ -1,42 +1,45 @@
 """
-Makes a 8-bit-Fulladder, it consists of 2x 4-bit-Fulladders and each 1-bit-Fulladder consists of 2 Halfadders...
+Makes a 8-bit-Fulladder, each 1-bit-Fulladder consists of 2 Halfadders...
 
 
----> 1st 4-bit Halfadder
+Enter Pin A (0|1) for H0 -->  0
+Enter Pin B (0|1) for H0 -->  0
 
-Enter Pin A (0|1) for H1 -->  0
-Enter Pin B (0|1) for H1 -->  0
-Enter Pin B (0|1) for H2 -->  0
 cin = 0 | cout = 0 | sum = 0
 
 Enter Pin A (0|1) for H1 -->  1
 Enter Pin B (0|1) for H1 -->  0
+
 cin = 0 | cout = 0 | sum = 1
 
-Enter Pin A (0|1) for H1 -->  0
-Enter Pin B (0|1) for H1 -->  1
+Enter Pin A (0|1) for H2 -->  0
+Enter Pin B (0|1) for H2 -->  1
+
 cin = 0 | cout = 0 | sum = 1
 
-Enter Pin A (0|1) for H1 -->  1
-Enter Pin B (0|1) for H1 -->  1
+Enter Pin A (0|1) for H3 -->  1
+Enter Pin B (0|1) for H3 -->  1
+
 cin = 0 | cout = 1 | sum = 0
 
----> 2nd 4-bit Halfadder
+Enter Pin A (0|1) for H4 -->  0
+Enter Pin B (0|1) for H4 -->  0
 
-Enter Pin A (0|1) for H1 -->  0
-Enter Pin B (0|1) for H1 -->  0
 cin = 1 | cout = 0 | sum = 1
 
-Enter Pin A (0|1) for H1 -->  0
-Enter Pin B (0|1) for H1 -->  1
+Enter Pin A (0|1) for H5 -->  1
+Enter Pin B (0|1) for H5 -->  0
+
 cin = 1 | cout = 1 | sum = 0
 
-Enter Pin A (0|1) for H1 -->  1
-Enter Pin B (0|1) for H1 -->  0
+Enter Pin A (0|1) for H6 -->  0
+Enter Pin B (0|1) for H6 -->  1
+
 cin = 1 | cout = 1 | sum = 0
 
-Enter Pin A (0|1) for H1 -->  1
-Enter Pin B (0|1) for H1 -->  1
+Enter Pin A (0|1) for H7 -->  1
+Enter Pin B (0|1) for H7 -->  1
+
 cin = 1 | cout = 1 | sum = 1
 
 
