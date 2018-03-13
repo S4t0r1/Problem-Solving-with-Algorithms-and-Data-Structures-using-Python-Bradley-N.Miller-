@@ -20,8 +20,10 @@ def print_all(all_boards):
     i = 0
     while i < 9:
         for n in range(3):
-            r1, r2, r3 = all_boards[i][n], all_boards[i + 1][n], all_boards[i + 2][n]
-            print("{}   {}   {}".format(r1, r2, r3))
+            (r1, r2, r3) = all_boards[i][n], all_boards[i + 1][n], all_boards[i + 2][n]
+            (r1, r2, r3) = [" ".join(str(element) for element in string) 
+                                             for string in (r1, r2, r3)]
+            print("{:^8s}{:^8s}{:^8s}".format(r1, r2, r3))
         i += 3
         print()
 
