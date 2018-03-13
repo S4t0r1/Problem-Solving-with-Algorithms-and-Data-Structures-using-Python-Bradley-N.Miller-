@@ -10,9 +10,7 @@ def print_board(board):
 
 
 def all_9_boards(board):
-    all_boards = []
-    for i in range(9):
-        all_boards.append(build_gameboard())
+    all_boards = [build_gameboard() for board in range(9)]
     return all_boards
 
 
