@@ -68,7 +68,8 @@ def fill_empty(all_boards):
     all_data = nums_in_rows_and_cols(b1, b2, b3, b4, b5, b6, b7, b8, b9)
     all_rows, all_cols = all_data[0], all_data[1]
     
-    taken_numbers = {x for row in all_rows for x in row if x != 0}
+    taken_numbers = ({x for row in all_rows for x in row if x != 0} | 
+                     {x for row in all_cols for x in row if x != 0})
     aval_numbers = set(range(1, 10)) - taken_numbers
     
     print("Numbers taken: {}".format(taken_numbers))
