@@ -34,7 +34,6 @@ def print_all(all_boards):
         i += 3
         print()
 
-print_all(all_9_boards())
 
 def nums_in_rows_and_cols(*args):
     assert len(args) == 9, "all 9 boards must be present!"
@@ -71,8 +70,6 @@ def fill_empty(changed=None):
                 taken_numbers = ({x for x in all_rows[i] if x != 0} | 
                                  {x for x in all_cols[y] if x != 0})
                 aval_numbers = set(range(1, 10)) ^ taken_numbers
-                print("Numbers taken: {}".format(taken_numbers))
-                print("Numbers available: {}\n".format(aval_numbers))
                 if len(aval_numbers) == 1:
                     boardnum, row, col = compute_coordinates(i, y)
                     print("board number = {}".format(boardnum + 1))
@@ -99,6 +96,7 @@ def main():
         changed = all_9_boards_changed(all_boards)
         if zeros_count == 0:
             break
+        print("{}\n".format("*" * 23))
         print_all(changed)
 
 
