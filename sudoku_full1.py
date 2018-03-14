@@ -5,11 +5,8 @@ def build_gameboard():
     return board
 
 
-def all_9_boards(board=None, changed=None):
-    if board is not None:
-        all_boards = [build_gameboard() for board in range(9)]
-    if changed is not None:
-        all_boards = changed
+def all_9_boards(board):
+    all_boards = [build_gameboard() for board in range(9)]
     board_1, board_2, board_3 = all_boards[0], all_boards[1], all_boards[2]
     board_4, board_5, board_6 = all_boards[3], all_boards[4], all_boards[5]
     board_7, board_8, board_9 = all_boards[6], all_boards[7], all_boards[8]
@@ -28,7 +25,6 @@ def all_9_boards(board=None, changed=None):
 
 def print_all(all_boards):
     board = build_gameboard()
-    all_boards = all_9_boards(board)
     i = 0
     while i < len(all_boards):
         for n in range(3):
@@ -73,15 +69,14 @@ def fill_empty():
     b1, b2, b3 = all_boards[0], all_boards[1], all_boards[2]
     b4, b5, b6 = all_boards[3], all_boards[4], all_boards[5]
     b7, b8, b9 = all_boards[6], all_boards[7], all_boards[8]
-    all_data = nums_in_rows_and_cols(b1, b2, b3, b4, b5, b6, b7, b8, b9)
-    all_rows, all_cols = all_data[0], all_data[1]
+    all_rows, all_cols = nums_in_rows_and_cols(b1, b2, b3, b4, b5, b6, b7, b8, b9)
     
     for i in range(len(all_rows)):
         for y, number in enumerate(all_rows[i], start=0):
             taken_numbers = ({x for x in all_rows[i] if x != 0} | 
                              {x for x in all_cols[y] if x != 0})
 
-            aval_numbers = set(range(1, 10)) - taken_numbers
+            aval_numbers = set(range(1, 10)) ^ taken_numbers
             if number == 0:
                 print("Numbers taken: {}".format(taken_numbers))
                 print("Numbers available: {}".format(aval_numbers))
@@ -94,5 +89,5 @@ def fill_empty():
                     all_boards[i][row][col] = list(aval_numbers)[0]
     return all_boards
 
-print("****************")
-print_all(all_9_boards(changed=fill_empty()))
+print()
+print_all(fill_empty())
