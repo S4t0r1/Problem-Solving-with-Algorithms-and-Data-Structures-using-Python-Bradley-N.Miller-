@@ -64,16 +64,22 @@ def fill_empty(all_boards):
     b1, b2, b3 = all_boards[0], all_boards[1], all_boards[2]
     b4, b5, b6 = all_boards[3], all_boards[4], all_boards[5]
     b7, b8, b9 = all_boards[6], all_boards[7], all_boards[8]
-    
     all_data = nums_in_rows_and_cols(b1, b2, b3, b4, b5, b6, b7, b8, b9)
     all_rows, all_cols = all_data[0], all_data[1]
     
-    taken_numbers = ({x for row in all_rows for x in row if x != 0} | 
-                     {x for row in all_cols for x in row if x != 0})
-    aval_numbers = set(range(1, 10)) - taken_numbers
-    
-    print("Numbers taken: {}".format(taken_numbers))
-    print("Numbers available: {}".format(aval_numbers))
+    for i in range(len(all_rows)):
+        for y, number in enumerate(all_rows[i], start=0):
+            taken_numbers = ({x for x in all_rows[i] if x != 0} | 
+                             {x for x in all_cols[y] if x != 0})
+
+            aval_numbers = set(range(1, 10)) - taken_numbers
+            if number == 0:
+                print("Numbers taken: {}".format(taken_numbers))
+                print("Numbers available: {}".format(aval_numbers))
+                if len(aval_numbers) == 1:
+                    print(aval_numbers)
+                    number = list(aval_numbers)[0]
+                    print_all(all_9_boards(build_gameboard()))
 
 
 fill_empty(all_9_boards(build_gameboard))
