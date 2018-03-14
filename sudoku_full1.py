@@ -60,7 +60,13 @@ def nums_in_rows_and_cols(*args):
 def compute_coordinates(i, y):
     row = i if (i < 3) else i - 3 if (3 <= i <= 5) else i - 6
     col = y if (y < 3) else y - 3 if (3 <= y <= 5) else y - 6
-    return (row, col)
+    if i < 3:
+        boardnum = 0 if (y < 3) else 1 if (3 <= y <= 5) else 2
+    elif 3 <= i <= 5:
+        boardnum = 3 if (y < 3) else 4 if (3 <= y <= 5) else 5
+    elif 5 < i:
+        boardnum = 6 if (y < 3) else 7 if (3 <= y <= 5) else 8
+    return (boardnum, row, col)
 
 
 def fill_empty():
@@ -81,12 +87,10 @@ def fill_empty():
                 print("Numbers taken: {}".format(taken_numbers))
                 print("Numbers available: {}".format(aval_numbers))
                 if len(aval_numbers) == 1:
-                    row, col = compute_coordinates(i, y)
-                    print("board number", i + 1)
-                    print(i, y)
+                    boardnum, row, col = compute_coordinates(i, y)
+                    print("board number", boardnum + 1)
                     print(row, col)
-                    print(list(aval_numbers)[0])
-                    all_boards[i][row][col] = list(aval_numbers)[0]
+                    all_boards[boardnum][row][col] = list(aval_numbers)[0]
     return all_boards
 
 print()
