@@ -5,7 +5,7 @@ def build_gameboard():
     return board
 
 
-def all_9_boards(board):
+def all_9_boards():
     all_boards = [build_gameboard() for board in range(9)]
     board_1, board_2, board_3 = all_boards[0], all_boards[1], all_boards[2]
     board_4, board_5, board_6 = all_boards[3], all_boards[4], all_boards[5]
@@ -35,9 +35,7 @@ def print_all(all_boards):
         i += 3
         print()
 
-
-print_all(all_9_boards(build_gameboard()))
-
+print_all(all_9_boards())
 
 def nums_in_rows_and_cols(*args):
     assert len(args) == 9, "all 9 boards must be present!"
@@ -47,13 +45,9 @@ def nums_in_rows_and_cols(*args):
         for i in range(3):
             nums_in_rows = args[a][i] + args[a + 1][i] + args[a + 2][i]
             nums_all_boards_rows.append(nums_in_rows)
-            print(nums_in_rows)
         a += 3
-    print()
     nums_all_boards_cols = [[x[i] for x in nums_all_boards_rows] 
                       for i in range(len(nums_all_boards_rows))]
-    for item in nums_all_boards_cols:
-        print(item)
     return (nums_all_boards_rows, nums_all_boards_cols)
 
 
@@ -70,28 +64,21 @@ def compute_coordinates(i, y):
 
 
 def fill_empty():
-    board = build_gameboard()
-    all_boards = all_9_boards(board)
-    b1, b2, b3 = all_boards[0], all_boards[1], all_boards[2]
-    b4, b5, b6 = all_boards[3], all_boards[4], all_boards[5]
-    b7, b8, b9 = all_boards[6], all_boards[7], all_boards[8]
-    all_rows, all_cols = nums_in_rows_and_cols(b1, b2, b3, b4, b5, b6, b7, b8, b9)
-    
+    all_boards = all_9_boards()
+    all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
     for i in range(len(all_rows)):
         for y, number in enumerate(all_rows[i], start=0):
-            taken_numbers = ({x for x in all_rows[i] if x != 0} | 
-                             {x for x in all_cols[y] if x != 0})
-
-            aval_numbers = set(range(1, 10)) ^ taken_numbers
             if number == 0:
+                taken_numbers = ({x for x in all_rows[i] if x != 0} | 
+                                 {x for x in all_cols[y] if x != 0})
+                aval_numbers = set(range(1, 10)) ^ taken_numbers
                 print("Numbers taken: {}".format(taken_numbers))
-                print("Numbers available: {}".format(aval_numbers))
+                print("Numbers available: {}\n".format(aval_numbers))
                 if len(aval_numbers) == 1:
                     boardnum, row, col = compute_coordinates(i, y)
-                    print("board number", boardnum + 1)
-                    print(row, col)
+                    print("board number = {}".format(boardnum + 1))
+                    print("row = {} \ncol = {} \n".format(row, col))
                     all_boards[boardnum][row][col] = list(aval_numbers)[0]
     return all_boards
 
-print()
 print_all(fill_empty())
