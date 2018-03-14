@@ -86,10 +86,10 @@ def all_9_boards_changed(changed):
 
 
 def main():
-    zeros_count = 0
     changed = None
-    print_all(all_9_boards)
+    print_all(all_9_boards())
     while True:
+        zeros_count = 0
         all_boards = fill_empty() if changed is None else fill_empty(changed)
         for board in all_boards:
             for row in board:
@@ -99,7 +99,7 @@ def main():
         changed = all_9_boards_changed(all_boards)
         if zeros_count == 0:
             break
-        print_all(all_boards)
+        print_all(changed)
 
 
 main()
