@@ -5,8 +5,11 @@ def build_gameboard():
     return board
 
 
-def all_9_boards(board):
-    all_boards = [build_gameboard() for board in range(9)]
+def all_9_boards(board=None, changed=None):
+    if board is not None:
+        all_boards = [build_gameboard() for board in range(9)]
+    if changed is not None:
+        all_boards = changed
     board_1, board_2, board_3 = all_boards[0], all_boards[1], all_boards[2]
     board_4, board_5, board_6 = all_boards[3], all_boards[4], all_boards[5]
     board_7, board_8, board_9 = all_boards[6], all_boards[7], all_boards[8]
@@ -58,7 +61,13 @@ def nums_in_rows_and_cols(*args):
     return (nums_all_boards_rows, nums_all_boards_cols)
 
 
-def fill_empty(all_boards):
+def compute_coordinates(i, y):
+    row = i if (i < 3) else i - 3 if (3 <= i <= 5) else i - 6
+    col = y if (y < 3) else y - 3 if (3 <= y <= 5) else y - 6
+    return (row, col)
+
+
+def fill_empty():
     board = build_gameboard()
     all_boards = all_9_boards(board)
     b1, b2, b3 = all_boards[0], all_boards[1], all_boards[2]
@@ -77,9 +86,13 @@ def fill_empty(all_boards):
                 print("Numbers taken: {}".format(taken_numbers))
                 print("Numbers available: {}".format(aval_numbers))
                 if len(aval_numbers) == 1:
-                    print(aval_numbers)
-                    number = list(aval_numbers)[0]
-                    print_all(all_9_boards(build_gameboard()))
+                    row, col = compute_coordinates(i, y)
+                    print("board number", i + 1)
+                    print(i, y)
+                    print(row, col)
+                    print(list(aval_numbers)[0])
+                    all_boards[i][row][col] = list(aval_numbers)[0]
+    return all_boards
 
-
-fill_empty(all_9_boards(build_gameboard))
+print("****************")
+print_all(all_9_boards(changed=fill_empty()))
