@@ -43,7 +43,6 @@ print_all(all_9_boards(build_gameboard()))
 def nums_in_rows_and_cols(*args):
     assert len(args) == 9, "all 9 boards must be present!"
     nums_all_boards_rows = []
-    nums_all_boards_cols = []
     a = 0
     while a < len(args):
         for i in range(3):
@@ -52,16 +51,10 @@ def nums_in_rows_and_cols(*args):
             print(nums_in_rows)
         a += 3
     print()
-    a = 0
-    while a < math.sqrt(len(args)):
-        for i in range(3):
-            nums_in_cols = ([args[a][m][i] for m in range(3)] +
-                        [args[a + 3][m][i] for m in range(3)] +
-                        [args[a + 6][m][i] for m in range(3)])
-            nums_all_boards_cols.append(nums_in_cols)
-            print(nums_in_cols)
-        a += 1
-    
+    nums_all_boards_cols = [[x[i] for x in nums_all_boards_rows] 
+                      for i in range(len(nums_all_boards_rows))]
+    for item in nums_all_boards_cols:
+        print(item)
     return (nums_all_boards_rows, nums_all_boards_cols)
 
 
