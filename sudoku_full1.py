@@ -24,7 +24,6 @@ def all_9_boards():
 
 
 def print_all(all_boards):
-    board = build_gameboard()
     i = 0
     while i < len(all_boards):
         for n in range(3):
@@ -63,8 +62,8 @@ def compute_coordinates(i, y):
     return (boardnum, row, col)
 
 
-def fill_empty():
-    all_boards = all_9_boards()
+def fill_empty(changed=None):
+    all_boards = all_9_boards() if changed is None else changed
     all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
     for i in range(len(all_rows)):
         for y, number in enumerate(all_rows[i], start=0):
@@ -81,4 +80,26 @@ def fill_empty():
                     all_boards[boardnum][row][col] = list(aval_numbers)[0]
     return all_boards
 
-print_all(fill_empty())
+
+def all_9_boards_changed(changed):
+    return changed
+
+
+def main():
+    zeros_count = 0
+    changed = None
+    print_all(all_9_boards)
+    while True:
+        all_boards = fill_empty() if changed is None else fill_empty(changed)
+        for board in all_boards:
+            for row in board:
+                for number in row:
+                    zero_add = 1 if number == 0 else 0
+                    zeros_count += zero_add
+        changed = all_9_boards_changed(all_boards)
+        if zeros_count == 0:
+            break
+        print_all(all_boards)
+
+
+main()
