@@ -4,21 +4,27 @@ def build_gameboard():
     board = [[0 for e in range(3)] for i in range(3)]
     return board
 
+def extract_data():
+    data = {}
+    data["1"] = [(0, 1, 3), (0, 2, 4), (1, 1, 8)]
+    data["2"] = [(0, 2, 6), (2, 1, 2), (2, 2, 4)]
+    data["3"] = [(1, 1, 4), (2, 0, 3), (2, 1, 8), (2, 2, 5)]
+    data["4"] = [(0, 2, 1), (1, 2, 3)]
+    data["5"] = [(0, 1, 4), (0, 2, 7), (1, 0, 2), (1, 1, 1), (1, 2, 9), (2, 0, 5), (2, 1, 6)]
+    data["6"] = [(1, 0, 8), (2, 0, 1)]
+    data["7"] = [(0, 0, 6), (0, 1, 7), (0, 2, 8), (1, 1, 2)]
+    data["8"] = [(0, 0, 1), (0, 1, 3), (2, 0, 4)]
+    data["9"] = [(1, 1, 1), (2, 0, 6), (2, 1, 5)]
+    return data
+
 def all_9_boards():
     all_boards = [build_gameboard() for board in range(9)]
-    board_1, board_2, board_3 = all_boards[0], all_boards[1], all_boards[2]
-    board_4, board_5, board_6 = all_boards[3], all_boards[4], all_boards[5]
-    board_7, board_8, board_9 = all_boards[6], all_boards[7], all_boards[8]
-    board_1[0][1], board_1[0][2], board_1[1][0], board_1[2][0] = 5, 8, 4, 9
-    board_2[0][0], board_2[0][1], board_2[1][1] = 9, 2, 7
-    board_3[1][0], board_3[1][2], board_3[2][1], board_3[2][2] = 5, 3, 1, 8
-    board_4[0][1], board_4[0][2], board_4[1][0] = 9, 7, 2
-    board_5[0][0], board_5[0][1], board_5[0][2], board_5[1][0] = 8, 3, 5, 7
-    board_5[1][2], board_5[2][0], board_5[2][1], board_5[2][2] = 6, 1, 9, 2
-    board_6[1][2], board_6[2][0], board_6[2][1] = 9, 6, 3
-    board_7[0][0], board_7[0][1], board_7[1][0], board_7[1][2] = 1, 4, 7, 5
-    board_8[1][1], board_8[2][1], board_8[2][2] = 6, 1, 3
-    board_9[0][2], board_9[1][2], board_9[2][0], board_9[2][1] = 5, 1, 4, 7 
+    data = extract_data() 
+    for key in data.keys():
+        boardnum = int(key) - 1
+        for item in data[key]:
+            x, y, v = item
+            all_boards[boardnum][x][y] = v
     return all_boards
 
 def print_all(all_boards):
