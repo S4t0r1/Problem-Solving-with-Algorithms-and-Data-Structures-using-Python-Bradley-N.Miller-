@@ -70,8 +70,8 @@ def fill_empty(changed=None):
     all_free_cells = cell_walk(*all_boards)
     for value in all_free_cells.values():
         boardnum, row, col = value
-        taken_numbers_board = check_nums_in_board(all_boards[boardnum])
         all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
+        taken_numbers_board = check_nums_in_board(all_boards[boardnum])
         taken_numbers = ({x for x in all_rows[row] if x != 0} | 
                          {x for x in all_cols[col] if x != 0} |
                                            taken_numbers_board)
@@ -82,6 +82,15 @@ def fill_empty(changed=None):
             print(" board number = {}".format(boardnum + 1))
             print(" row = {} \n col = {} \n".format(row, col))
             all_boards[boardnum][row][col] = list(aval_numbers)[0]
+            all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
+            for el in all_rows[row]:
+                if el != 0:
+                    if all_rows[row].count(el) > 1:
+                        print("ERROR")
+            for eli in all_cols[col]:
+                if eli != 0:
+                    if all_cols[col].count(eli) > 1:
+                        print("ERROR")
             return all_boards
 
 def all_9_boards_changed(changed):
