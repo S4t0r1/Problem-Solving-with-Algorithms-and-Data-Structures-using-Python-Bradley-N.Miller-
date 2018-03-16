@@ -5,15 +5,15 @@ def build_gameboard():
     return board
 
 def extract_data():
-    data = {1 : "013024118",
-            2 : "026212224",
-            3 : "114203218225",
-            4 : "021123",
-            5 : "014027102111129205216",
-            6 : "108201",
-            7 : "006017028112",
-            8 : "001013204",
-            9 : "111206215"}
+    data = {1 : "116121222",
+            2 : "013127206",
+            3 : "104129218227",
+            4 : "015128202",
+            5 : "002105121224",
+            6 : "028103215",
+            7 : "004012109126",
+            8 : "026103211",
+            9 : "008107114"}
     assert len(data.keys()) == 9, "data must comply with 9 boards"
     return data
 
@@ -67,21 +67,22 @@ def cell_walk(*args):
 
 def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
-    all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
     all_free_cells = cell_walk(*all_boards)
     for value in all_free_cells.values():
         boardnum, row, col = value
         taken_numbers_board = check_nums_in_board(all_boards[boardnum])
+        all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
         taken_numbers = ({x for x in all_rows[row] if x != 0} | 
                          {x for x in all_cols[col] if x != 0} |
                                            taken_numbers_board)
-        aval_numbers = set(range(1, 10)) ^ taken_numbers
+        aval_numbers = set(range(1, 10)) - taken_numbers
+        print("aval nums", aval_numbers)
         if len(aval_numbers) == 1:
             print(" inserted number = {}".format(list(aval_numbers)[0]))
             print(" board number = {}".format(boardnum + 1))
             print(" row = {} \n col = {} \n".format(row, col))
             all_boards[boardnum][row][col] = list(aval_numbers)[0]
-    return all_boards
+            return all_boards
 
 def all_9_boards_changed(changed):
     return changed
