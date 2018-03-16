@@ -65,6 +65,14 @@ def cell_walk(*args):
                     cell_coordinates[key] = (board_number, row_number, col_number)
     return cell_coordinates
 
+def calc_adj_rows_cols(boardnum, row, col):
+    if boardnum in {0, 1, 2}:
+        adj_row, adj_col = row, col
+    else:
+        minnum = 3 if boardnum in {3, 4, 5} else 6
+        adj_row, adj_col = tuple(x + minnum for x in (row, col))
+    return adj_row, adj_col
+
 def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
     all_free_cells = cell_walk(*all_boards)
