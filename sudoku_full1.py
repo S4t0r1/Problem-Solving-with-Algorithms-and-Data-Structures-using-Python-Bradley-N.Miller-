@@ -43,16 +43,16 @@ def print_all(all_boards):
 
 def nums_in_rows_and_cols(*args):
     assert len(args) == 9, "all 9 boards must be present!"
-    nums_all_boards_rows = []
+    adjacent_boards_rows = []
     a = 0
     while a < len(args):
         for i in range(3):
-            nums_in_rows = args[a][i] + args[a + 1][i] + args[a + 2][i]
-            nums_all_boards_rows.append(nums_in_rows)
+            nums_in_rows_line = args[a][i] + args[a + 1][i] + args[a + 2][i]
+            adjacent_boards_rows.append(nums_in_rows_line)
         a += 3
-    nums_all_boards_cols = [[x[i] for x in nums_all_boards_rows] 
-                      for i in range(len(nums_all_boards_rows))]
-    return (nums_all_boards_rows, nums_all_boards_cols)
+    adjacent_boards_cols = [[x[i] for x in adjacent_boards_rows] 
+                      for i in range(len(adjacent_boards_rows))]
+    return (adjacent_boards_rows, adjacent_boards_cols)
 
 def compute_coordinates(i, y):
     row = i if (i < 3) else i - 3 if (3 <= i <= 5) else i - 6
