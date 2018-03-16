@@ -49,17 +49,6 @@ def nums_in_rows_and_cols(*args):
                       for i in range(len(adjacent_boards_rows))]
     return (adjacent_boards_rows, adjacent_boards_cols)
 
-def compute_coordinates(i, y):
-    row = i if (i < 3) else i - 3 if (3 <= i <= 5) else i - 6
-    col = y if (y < 3) else y - 3 if (3 <= y <= 5) else y - 6
-    if i < 3:
-        boardnum = 0 if (y < 3) else 1 if (3 <= y <= 5) else 2
-    elif 3 <= i <= 5:
-        boardnum = 3 if (y < 3) else 4 if (3 <= y <= 5) else 5
-    elif 5 < i:
-        boardnum = 6 if (y < 3) else 7 if (3 <= y <= 5) else 8
-    return (boardnum, row, col)
-
 def check_nums_in_board(board_i):
     remove_chars = {c for c in string.punctuation + string.whitespace}
     taken_numbers_board = {int(x) for row in board_i for x in str(board_i) 
@@ -74,29 +63,24 @@ def cell_walk(*args):
                 if cell == 0:
                     key = "".join(str(x) for x in (board_number, row_number, col_number))
                     cell_coordinates[key] = (board_number, row_number, col_number)
-    for key, value in cell_coordinates.items():
-        print("{key} : {value}".format(**locals()))
     return cell_coordinates
 
 def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
     all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
     all_free_cells = cell_walk(*all_boards)
-    for i in range(len(all_rows)):
-        for y, number in enumerate(all_rows[i]):
-            if number == 0:
-                boardnum, row, col = compute_coordinates(i, y)
-                taken_numbers_board = check_nums_in_board(all_boards[boardnum])
-                taken_numbers = ({x for x in all_rows[i] if x != 0} | 
-                                 {x for x in all_cols[y] if x != 0} |
-                                 taken_numbers_board)
-                
-                aval_numbers = set(range(1, 10)) - taken_numbers
-                if len(aval_numbers) == 1:
-                    print(" inserted number = {}".format(list(aval_numbers)[0]))
-                    print(" board number = {}".format(boardnum + 1))
-                    print(" row = {} \n col = {} \n".format(row, col))
-                    all_boards[boardnum][row][col] = list(aval_numbers)[0]
+    for value in all_free_cells.values():
+        boardnum, row, col = value
+        taken_numbers_board = check_nums_in_board(all_boards[boardnum])
+        taken_numbers = ({x for x in all_rows[row] if x != 0} | 
+                         {x for x in all_cols[col] if x != 0} |
+                                           taken_numbers_board)
+        aval_numbers = set(range(1, 10)) ^ taken_numbers
+        if len(aval_numbers) == 1:
+            print(" inserted number = {}".format(list(aval_numbers)[0]))
+            print(" board number = {}".format(boardnum + 1))
+            print(" row = {} \n col = {} \n".format(row, col))
+            all_boards[boardnum][row][col] = list(aval_numbers)[0]
     return all_boards
 
 def all_9_boards_changed(changed):
