@@ -68,15 +68,12 @@ def check_nums_in_board(board_i):
 
 def cell_walk(*args):
     cell_coordinates = {}
-    for board_n in args:
-        board_number = args.index(board_n)
-        for row in board_n:
-            row_number = args[board_number].index(row)
-            for cell in row:
-                col_number = args[board_number][row_number].index(cell)
-                key = "".join(str(x) for x in (board_number, row_number, col_number))
-                cell_coordinates[key] = (board_number, row_number, col_number)
-                    
+    for board_number, board_n in enumerate(args):
+        for row_number, row in enumerate(board_n):
+            for col_number, cell in enumerate(row):
+                if cell == 0:
+                    key = "".join(str(x) for x in (board_number, row_number, col_number))
+                    cell_coordinates[key] = (board_number, row_number, col_number)
     for key, value in cell_coordinates.items():
         print("{key} : {value}".format(**locals()))
     return cell_coordinates
@@ -85,9 +82,8 @@ def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
     all_rows, all_cols = nums_in_rows_and_cols(*all_boards)
     all_free_cells = cell_walk(*all_boards)
-    
     for i in range(len(all_rows)):
-        for y, number in enumerate(all_rows[i], start=0):
+        for y, number in enumerate(all_rows[i]):
             if number == 0:
                 boardnum, row, col = compute_coordinates(i, y)
                 taken_numbers_board = check_nums_in_board(all_boards[boardnum])
