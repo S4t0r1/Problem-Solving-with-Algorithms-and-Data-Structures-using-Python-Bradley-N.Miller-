@@ -5,25 +5,28 @@ def build_gameboard():
     return board
 
 def extract_data():
-    data = {}
-    data["1"] = [(0, 1, 3), (0, 2, 4), (1, 1, 8)]
-    data["2"] = [(0, 2, 6), (2, 1, 2), (2, 2, 4)]
-    data["3"] = [(1, 1, 4), (2, 0, 3), (2, 1, 8), (2, 2, 5)]
-    data["4"] = [(0, 2, 1), (1, 2, 3)]
-    data["5"] = [(0, 1, 4), (0, 2, 7), (1, 0, 2), (1, 1, 1), (1, 2, 9), (2, 0, 5), (2, 1, 6)]
-    data["6"] = [(1, 0, 8), (2, 0, 1)]
-    data["7"] = [(0, 0, 6), (0, 1, 7), (0, 2, 8), (1, 1, 2)]
-    data["8"] = [(0, 0, 1), (0, 1, 3), (2, 0, 4)]
-    data["9"] = [(1, 1, 1), (2, 0, 6), (2, 1, 5)]
+    data = {1 : "013024118",
+            2 : "026212224",
+            3 : "114203218225",
+            4 : "021123",
+            5 : "014027102111129205216",
+            6 : "108201",
+            7 : "006017028112",
+            8 : "001013204",
+            9 : "111206215"}
+    assert len(data.keys()) == 9, "data must comply with 9 boards"
     return data
 
 def all_9_boards():
     all_boards = [build_gameboard() for board in range(9)]
     data = extract_data() 
-    for key in data.keys():
-        boardnum = int(key) - 1
-        for item in data[key]:
-            x, y, v = item
+    for key, value in data.items():
+        assert len(value) % 3 == 0, "coordinates info must be in x,y,v sequence"
+        boardnum = key - 1
+        value = [tuple(int(x) for x in (value[i], value[i + 1], value[i + 2])) 
+                                             for i in range(0, len(value), 3)]
+        for coordinate_info in value:
+            x, y, v = coordinate_info
             all_boards[boardnum][x][y] = v
     return all_boards
 
