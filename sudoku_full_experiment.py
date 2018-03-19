@@ -65,12 +65,14 @@ def cell_walk(*args):
                     cell_coordinates[key] = (board_number, row_number, col_number)
     return cell_coordinates
 
-def calc_adj_rows_cols(boardnum, row, col):
-    if boardnum in {0, 1, 2}:
-        adj_row, adj_col = row, col
-    else:
-        minnum = 3 if boardnum in {3, 4, 5} else 6
-        adj_row, adj_col = tuple(x + minnum for x in (row, col))
+def calc_adj_rows_cols(boardnum, row, col, all_boards_len):
+    root = int(math.sqrt(all_boards_len))
+    adj_row = (row if boardnum in {0, 1, 2} 
+          else row + root if boardnum in {3, 4, 5}
+          else row + (root + root))
+    adj_col = (col if boardnum in {0, 3, 6}
+          else col + root if boardnum in {1, 4, 7}
+          else col + (root + root))
     return adj_row, adj_col
 
 def fill_empty(changed=None):
