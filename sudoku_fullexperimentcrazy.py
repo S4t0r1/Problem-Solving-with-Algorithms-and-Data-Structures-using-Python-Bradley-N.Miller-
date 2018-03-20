@@ -94,12 +94,10 @@ def calc_adj_rows_cols(boardnum, row, col, all_boards_len):
 def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
     all_free_cells = cell_walk(*all_boards)
-    all_avals = []
     for key, value in all_free_cells.items():
         boardnum, row, col = tuple(int(x) for x in key)
         aval_numbers, adj_row, adj_col = value
         print("aval =", aval_numbers, "coordinates=", adj_row, adj_col)
-        all_avals.append(aval_numbers)
         if len(aval_numbers) == 1:
             print(" inserted number = {}".format(list(aval_numbers)[0]))
             print(" board number = {}".format(boardnum + 1))
@@ -107,24 +105,21 @@ def fill_empty(changed=None):
             all_boards[boardnum][row][col] = list(aval_numbers)[0]
             return all_boards
         if len(aval_numbers) >= 2:
-            adj_row_sets, adj_col_sets = all_sets(all_free_cells, 
-                      find_adj_row=adj_row, find_adj_col=adj_col)
-            new_data_col = manage_sets(adj_col_sets)
-            for key, value in new_data_col.items():
-                all_free_cells[key] = value
-            new_data_row = manage_sets(adj_row_sets)
-            for key, value in new_data_row.items():
-                all_free_cells[key] = value
+            adj_row_sets, adj_col_sets = all_sets(all_free_cells, adj_row, adj_col)
+            new_data_r, new_data_c = manage_sets(adj_row_sets), manage_sets(adj_col_sets)
+            for new_data in (new_data_r, new_data_c):
+                for key, value in new_data.items():
+                    all_free_cells[key] = value
     return all_boards
 
 
-def all_sets(cell_coordinates, find_adj_row=None, find_adj_col=None):
+def all_sets(cell_coordinates, find_adj_row, find_adj_col):
     sets_by_adj_rows, sets_by_adj_cols = {}, {}
     for batch, value in cell_coordinates.items():
         aval_numbers, adj_row, adj_col = value
-        if adj_row == find_adj_row and find_adj_row is not None:
+        if adj_row == find_adj_row:
             sets_by_adj_rows[batch] = aval_numbers, adj_row, adj_col
-        if adj_col == find_adj_col and find_adj_col is not None:
+        if adj_col == find_adj_col:
             sets_by_adj_cols[batch] = aval_numbers, adj_row, adj_col
     return (sets_by_adj_rows, sets_by_adj_cols)
 
