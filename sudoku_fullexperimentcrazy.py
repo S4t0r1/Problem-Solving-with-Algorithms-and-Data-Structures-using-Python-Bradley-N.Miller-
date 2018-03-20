@@ -1,8 +1,10 @@
 import math, string
 
+
 def build_gameboard():
     board = [[0 for e in range(3)] for i in range(3)]
     return board
+
 
 def extract_data():
     data = {1 : "116121222",
@@ -17,6 +19,7 @@ def extract_data():
     assert len(data.keys()) == 9, "data must comply with 9 boards"
     return data
 
+
 def all_9_boards():
     all_boards = [build_gameboard() for board in range(9)]
     data = extract_data() 
@@ -30,6 +33,7 @@ def all_9_boards():
             all_boards[boardnum][x][y] = v
     return all_boards
 
+
 def print_all(all_boards):
     i = 0
     while i < len(all_boards):
@@ -40,6 +44,7 @@ def print_all(all_boards):
             print("{:^8s}{:^8s}{:^8s}".format(r1, r2, r3))
         i += 3
         print()
+
 
 def nums_in_rows_and_cols(*args):
     assert len(args) == 9, "all 9 boards must be present!"
@@ -89,6 +94,7 @@ def calc_adj_rows_cols(boardnum, row, col, all_boards_len):
 def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
     all_free_cells = cell_walk(*all_boards)
+    all_avals = []
     for key, value in all_free_cells.items():
         boardnum, row, col = tuple(int(x) for x in key)
         aval_numbers, adj_row, adj_col = value
@@ -101,10 +107,14 @@ def fill_empty(changed=None):
             all_boards[boardnum][row][col] = list(aval_numbers)[0]
             return all_boards
         if len(aval_numbers) >= 2:
-            adj_row_sets, adj_col_sets = all_sets(all_free_cells, find_adj_col=adj_col)
-            new_data = manage_sets(sets_adj_cols=adj_col_sets)
-            for key, value in new_data.items():
-                all_free_cells[key] = value  
+            adj_row_sets, adj_col_sets = all_sets(all_free_cells, 
+                      find_adj_row=adj_row, find_adj_col=adj_col)
+            new_data_col = manage_sets(adj_col_sets)
+            for key, value in new_data_col.items():
+                all_free_cells[key] = value
+            new_data_row = manage_sets(adj_row_sets)
+            for key, value in new_data_row.items():
+                all_free_cells[key] = value
     return all_boards
 
 
@@ -120,17 +130,26 @@ def all_sets(cell_coordinates, find_adj_row=None, find_adj_col=None):
 
 
 
-def manage_sets(sets_adj_rows=None, sets_adj_cols=None):
-    sets_lst_cols = [value[0] for value in sets_adj_cols.values()]
+def manage_sets(sets_adj_rows_or_cols):
+    sets_lst = [value[0] for value in sets_adj_rows_or_cols.values()]
     dupset = set()
-    for batch, value in sets_adj_cols.items():
+    for batch, value in sets_adj_rows_or_cols.items():
         set_, adj_row, adj_col = value
-        if sets_lst_cols.count(set_) > 1:
+        if sets_lst.count(set_) > 1:
             dupset = set_
-        if set_ != dupset and dupset.issubset(set_):
-            set_ = set_ - dupset
-        sets_adj_cols[batch] = set_, adj_row, adj_col
-    return sets_adj_cols
+        if set_ != dupset:
+            if dupset.issubset(set_):
+                set_ = set_ - dupset
+            if dupset.issuperset(set_):
+                for num_s in set_:
+                    for otherset_ in sets_lst:
+                        if num_s not in otherset_:
+                            magicnum = num_s
+                for num_d in dupset:
+                    if num_d in set_ and num_d != magicnum:
+                        set_.remove(num_d)
+        sets_adj_rows_or_cols[batch] = set_, adj_row, adj_col
+    return sets_adj_rows_or_cols
     
 
 def all_9_boards_changed(changed):
