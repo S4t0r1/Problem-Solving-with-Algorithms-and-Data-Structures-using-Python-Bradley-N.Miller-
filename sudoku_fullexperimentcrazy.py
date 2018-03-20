@@ -48,19 +48,7 @@ def nums_in_rows_and_cols(*args):
     adjacent_boards_cols = [[x[i] for x in adjacent_boards_rows] 
                       for i in range(len(adjacent_boards_rows))]
     return (adjacent_boards_rows, adjacent_boards_cols)
-
-
-def all_sets(cell_coordinates, find_adj_row=None, find_adj_col=None):
-    sets_by_adj_rows, sets_by_adj_cols = {}, {}
-    for batch, value in cell_coordinates.items():
-        aval_numbers, adj_row, adj_col = value
-        if adj_row == find_adj_row and find_adj_row is not None:
-            sets_by_adj_rows[batch] = aval_numbers
-        if adj_col == find_adj_col and find_adj_col is not None:
-            sets_by_adj_cols[batch] = aval_numbers
-    return (sets_by_adj_rows, sets_by_adj_cols)
     
-        
 
 def check_nums_in_board(board_i):
     remove_chars = {c for c in string.punctuation + string.whitespace}
@@ -104,38 +92,50 @@ def fill_empty(changed=None):
     for key, value in all_free_cells.items():
         boardnum, row, col = tuple(int(x) for x in key)
         aval_numbers, adj_row, adj_col = value
-        
         print("aval =", aval_numbers, "coordinates=", adj_row, adj_col)
-        
+        all_avals.append(aval_numbers)
         if len(aval_numbers) == 1:
             print(" inserted number = {}".format(list(aval_numbers)[0]))
             print(" board number = {}".format(boardnum + 1))
             print(" row = {} \n col = {} \n".format(row, col))
             all_boards[boardnum][row][col] = list(aval_numbers)[0]
             return all_boards
-        
-        if len(aval_numbers) == 2:
-            print(adj_col)
+        if len(aval_numbers) >= 2:
             adj_row_sets, adj_col_sets = all_sets(all_free_cells, find_adj_col=adj_col)
-            for batch, set_ in adj_col_sets.items():
-                boardnum, row, col = tuple(int(x) for x in batch)
-                if aval_numbers == set_ and list(adj_col_sets.values()).count(set_) > 1:
-                    print("DUPLICATE =", aval_numbers)
-                    new_sets = manage_sets(aval_numbers, sets_adj_cols=adj_col_sets)
-                    for kei, aval in new_sets.items():
-                        if key == kei:
-                            all_free_cells[key] = aval, adj_row, adj_col
+            new_data = manage_sets(sets_adj_cols=adj_col_sets)
+            for key, value in new_data.items():
+                all_free_cells[key] = value  
     return all_boards
 
-def manage_sets(aval_numbers, sets_adj_rows=None, sets_adj_cols=None):
-    for set_ in sets_adj_cols.values():
-        if aval_numbers.issubset(set_) and len(aval_numbers) < len(set_):
-            set_ = (set_ - aval_numbers)
+
+def all_sets(cell_coordinates, find_adj_row=None, find_adj_col=None):
+    sets_by_adj_rows, sets_by_adj_cols = {}, {}
+    for batch, value in cell_coordinates.items():
+        aval_numbers, adj_row, adj_col = value
+        if adj_row == find_adj_row and find_adj_row is not None:
+            sets_by_adj_rows[batch] = aval_numbers, adj_row, adj_col
+        if adj_col == find_adj_col and find_adj_col is not None:
+            sets_by_adj_cols[batch] = aval_numbers, adj_row, adj_col
+    return (sets_by_adj_rows, sets_by_adj_cols)
+
+
+
+def manage_sets(sets_adj_rows=None, sets_adj_cols=None):
+    sets_lst_cols = [value[0] for value in sets_adj_cols.values()]
+    dupset = set()
+    for batch, value in sets_adj_cols.items():
+        set_, adj_row, adj_col = value
+        if sets_lst_cols.count(set_) > 1:
+            dupset = set_
+        if set_ != dupset and dupset.issubset(set_):
+            set_ = set_ - dupset
+        sets_adj_cols[batch] = set_, adj_row, adj_col
     return sets_adj_cols
     
 
 def all_9_boards_changed(changed):
     return changed
+
 
 def main():
     changed = None
