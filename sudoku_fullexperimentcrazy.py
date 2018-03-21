@@ -97,7 +97,7 @@ def fill_empty(changed=None):
     for key, value in all_free_cells.items():
         boardnum, row, col = tuple(int(x) for x in key)
         aval_numbers, adj_row, adj_col = value
-        print("aval =", aval_numbers, "coordinates=", adj_row, adj_col)
+        print("OUTER", key, ":", all_free_cells[key])
         if len(aval_numbers) == 1:
             print(" inserted number = {}".format(list(aval_numbers)[0]))
             print(" board number = {}".format(boardnum + 1))
@@ -105,46 +105,71 @@ def fill_empty(changed=None):
             all_boards[boardnum][row][col] = list(aval_numbers)[0]
             return all_boards
         if len(aval_numbers) >= 2:
-            adj_row_sets, adj_col_sets = all_sets(all_free_cells, adj_row, adj_col)
-            new_data_r, new_data_c = manage_sets(adj_row_sets), manage_sets(adj_col_sets)
-            for new_data in (new_data_r, new_data_c):
-                for key, value in new_data.items():
-                    all_free_cells[key] = value
+            adj_row_sets, adj_col_sets, board_sets = all_sets(all_free_cells, 
+                                                  adj_row, adj_col, boardnum)
+            data_r, data_c, data_b = manage_sets(adj_row_sets, adj_col_sets, board_sets)
+            for data in (data_r, data_c, data_b):
+                for batch, new_value in data.items():
+                    boardnum, row, col = tuple(int(x) for x in batch)
+                    aval_numbers, adj_row, adj_col = new_value
+                    if len(aval_numbers) == 1:
+                        print(" inserted number = {}".format(list(aval_numbers)[0]))
+                        print(" board number = {}".format(boardnum + 1))
+                        print(" row = {} \n col = {} \n".format(row, col))
+                        all_boards[boardnum][row][col] = list(aval_numbers)[0]
+                        return all_boards
     return all_boards
 
 
-def all_sets(cell_coordinates, find_adj_row, find_adj_col):
-    sets_by_adj_rows, sets_by_adj_cols = {}, {}
+def all_sets(cell_coordinates, find_adj_row, find_adj_col, find_board):
+    sets_by_adj_rows, sets_by_adj_cols, sets_in_board = {}, {}, {}
     for batch, value in cell_coordinates.items():
+        boardnum = int(batch[0])
         aval_numbers, adj_row, adj_col = value
         if adj_row == find_adj_row:
             sets_by_adj_rows[batch] = aval_numbers, adj_row, adj_col
         if adj_col == find_adj_col:
             sets_by_adj_cols[batch] = aval_numbers, adj_row, adj_col
-    return (sets_by_adj_rows, sets_by_adj_cols)
+        if boardnum == find_board:
+            sets_in_board[batch] = aval_numbers, adj_row, adj_col
+    return (sets_by_adj_rows, sets_by_adj_cols, sets_in_board)
 
 
 
-def manage_sets(sets_adj_rows_or_cols):
-    sets_lst = [value[0] for value in sets_adj_rows_or_cols.values()]
-    dupset = set()
-    for batch, value in sets_adj_rows_or_cols.items():
-        set_, adj_row, adj_col = value
-        if sets_lst.count(set_) > 1:
-            dupset = set_
-        if set_ != dupset:
-            if dupset.issubset(set_):
-                set_ = set_ - dupset
-            if dupset.issuperset(set_):
-                for num_s in set_:
-                    for otherset_ in sets_lst:
-                        if num_s not in otherset_:
-                            magicnum = num_s
-                for num_d in dupset:
-                    if num_d in set_ and num_d != magicnum:
-                        set_.remove(num_d)
-        sets_adj_rows_or_cols[batch] = set_, adj_row, adj_col
-    return sets_adj_rows_or_cols
+def manage_sets(*args):
+    assert len(args) == 3, "can have only 3 set arrays (by adj_rows, adj_cols and board)"
+    for arg in args[:2]:
+        sets_lst = [value[0] for value in arg.values()]
+        dupset = set()
+        for batch, value in arg.items():
+            set_, adj_row, adj_col = value
+            if sets_lst.count(set_) > 1:
+                dupset = set_
+            if set_ != dupset:
+                if dupset.issubset(set_):
+                    set_ = set_ - dupset
+                if dupset.issuperset(set_):
+                    for num_s in set_:
+                        for otherset_ in sets_lst:
+                            if num_s not in otherset_:
+                                magicnum = num_s
+                    for num_d in dupset:
+                        if num_d in set_ and num_d != magicnum:
+                            set_.remove(num_d)
+            arg[batch] = set_, adj_row, adj_col
+    if args[-1]:
+        sets_in_board = args[-1]
+        sets_for_board_lst = [value[0] for value in sets_in_board.values()]
+        candidates_count = [tuple(x)[i] for x in sets_for_board_lst for i in range(len(x))]
+        sole_candidate = set()
+        for candidate in candidates_count:
+            if candidates_count.count(candidate) == 1:
+                sole_candidate.add(candidate)
+                for key, val in sets_in_board.items():
+                    sett, adj_row, adj_col = val
+                    if candidate in sett:
+                        sets_in_board[key] = sole_candidate, adj_row, adj_col
+    return args
     
 
 def all_9_boards_changed(changed):
