@@ -62,21 +62,43 @@ def check_nums_in_board(board_i):
     return taken_numbers_board
 
 
+def create_sets(cell_coordinates, changed=None):
+    all_boards = all_9_boards() if changed is None else changed
+    all_adj_rows, all_adj_cols = nums_in_rows_and_cols(*all_boards)
+    all_nums = set(range(1, 10))
+    cell_data = {}
+    for batch, adj_coordinates in cell_coordinates.items():
+        boardnum = int(batch[0])
+        adj_row, adj_col = adj_coordinates
+        taken_nums_board = check_nums_in_board(all_boards[boardnum])
+        taken_nums = ({x for x in all_adj_rows[adj_row] if x != 0} | 
+                      {x for x in all_adj_cols[adj_col] if x != 0}
+                                               | taken_nums_board)
+        cell_set = all_nums - taken_nums
+        cell_data[batch] = cell_set, adj_row, adj_col
+    adj_row_sets, adj_col_sets, board_sets = {}, {}, {}
+    for i in range(len(all_boards)):
+        for batch, values in cell_data.items():
+            boardnum = int(batch[0])
+            cell_set, adj_row, adj_col = values
+            if adj_row == i:
+                adj_row_sets[batch] = cell_set, adj_row, adj_col
+            if adj_col == i:
+                adj_col_sets[batch] = cell_set, adj_row, adj_col
+            if boardnum == i:
+                board_sets[batch] = cell_set, adj_row, adj_col
+    return cell_data, adj_row_sets, adj_col_sets, board_sets
+
+
 def cell_walk(*args):
     cell_coordinates = {}
-    all_adj_rows, all_adj_cols = nums_in_rows_and_cols(*args)
-    for boardnum, board_n in enumerate(args):
-        for rownum, row in enumerate(board_n):
-            for colnum, cell in enumerate(row):
+    for b_num, board_n in enumerate(args):
+        for r_num, row in enumerate(board_n):
+            for c_num, cell in enumerate(row):
                 if cell == 0:
-                    taken_numbers_in_board = check_nums_in_board(args[boardnum])
-                    adj_row, adj_col = calc_adj_rows_cols(boardnum, rownum, colnum, len(args))
-                    taken_numbers = ({x for x in all_adj_rows[adj_row] if x != 0} | 
-                                     {x for x in all_adj_cols[adj_col] if x != 0} |
-                                                             taken_numbers_in_board)
-                    aval_numbers = set(range(1, 10)) - taken_numbers
-                    key = "".join(str(x) for x in (boardnum, rownum, colnum))
-                    cell_coordinates[key] = aval_numbers, adj_row, adj_col
+                    adj_row, adj_col = calc_adj_rows_cols(b_num, r_num, c_num, len(args))
+                    key = "".join(str(x) for x in (b_num, r_num, c_num))
+                    cell_coordinates[key] = adj_row, adj_col
     return cell_coordinates
  
 
@@ -93,39 +115,24 @@ def calc_adj_rows_cols(boardnum, row, col, all_boards_len):
 
 def fill_empty(changed=None):
     all_boards = all_9_boards() if changed is None else changed
-    all_free_cells = cell_walk(*all_boards)
-    for key, value in all_free_cells.items():
+    cell_coordinates = cell_walk(*all_boards)
+    for key, value in cell_coordinates.items():
         boardnum, row, col = tuple(int(x) for x in key)
-        aval_numbers, adj_row, adj_col = value
-        adj_row_sets, adj_col_sets, board_sets = all_sets(all_free_cells, 
-                                              adj_row, adj_col, boardnum)
-        data_r, data_c, data_b = manage_sets(adj_row_sets, adj_col_sets, board_sets)
-        for data in (data_r, data_c, data_b):
+        cell_data, adj_row_sets, adj_col_sets, board_sets = create_sets(cell_coordinates, all_boards)
+        aval_nums = cell_data[key][0]
+        ars_changed, acs_changed, bs_changed = manage_sets(adj_row_sets, adj_col_sets, board_sets)
+        for data in (ars_changed, acs_changed, bs_changed):
             for batch, new_value in data.items():
                 boardnum, row, col = tuple(int(x) for x in batch)
                 aval_numbers, adj_row, adj_col = new_value
+                print(aval_numbers)
                 if len(aval_numbers) == 1:
                     print(" inserted number = {}".format(list(aval_numbers)[0]))
-                    print(" board number = {}".format(boardnum + 1))
+                    print(" board number = {}".format(boardnum))
                     print(" row = {} \n col = {} \n".format(row, col))
                     all_boards[boardnum][row][col] = list(aval_numbers)[0]
                     return all_boards
     return all_boards
-
-
-def all_sets(cell_coordinates, find_adj_row, find_adj_col, find_board):
-    sets_by_adj_rows, sets_by_adj_cols, sets_in_board = {}, {}, {}
-    for batch, value in cell_coordinates.items():
-        boardnum = int(batch[0])
-        aval_numbers, adj_row, adj_col = value
-        if adj_row == find_adj_row:
-            sets_by_adj_rows[batch] = aval_numbers, adj_row, adj_col
-        if adj_col == find_adj_col:
-            sets_by_adj_cols[batch] = aval_numbers, adj_row, adj_col
-        if boardnum == find_board:
-            sets_in_board[batch] = aval_numbers, adj_row, adj_col
-    return (sets_by_adj_rows, sets_by_adj_cols, sets_in_board)
-
 
 
 def manage_sets(*args):
@@ -137,19 +144,25 @@ def manage_sets(*args):
             set_, adj_row, adj_col = value
             if sets_lst.count(set_) > 1:
                 dupset = set_
+                continue
             if set_ != dupset:
                 if dupset.issubset(set_):
-                    set_ = set_
+                    set_ = set_ - dupset
                 if dupset.issuperset(set_):
                     for num_s in set_:
                         for otherset_ in sets_lst:
                             if num_s not in otherset_:
                                 magicnum = num_s
+                                break
                     for num_d in dupset:
                         if num_d in set_ and num_d != magicnum:
                             set_.remove(num_d)
-            arg[batch] = set_, adj_row, adj_col
                 
+            arg[batch] = set_, adj_row, adj_col
+            for item in (args[1], args[2]):
+                for batch_2, value_2 in item.items():
+                    if batch_2 == batch:
+                        item[batch_2] = set_, adj_row, adj_col
     if args[-1]:
         sets_in_board = args[-1]
         sets_for_board_lst = [value[0] for value in sets_in_board.values()]
