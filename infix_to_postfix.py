@@ -1,6 +1,17 @@
 from pythonds.basic.stack import Stack
 
 def convertToPostfix(infixStr):
+    """This function converts a given infix string into
+       a postfix string..
+
+       >>> print(convertToPostfix("A * B + C * D"))
+       A B * C D * +
+       >>> print(convertToPostfix("( A + B ) * C - ( D - E ) * ( F + G )"))
+       A B + C * D E - F G + * -
+       >>> print(convertToPostfix("5 * 3 ^ ( 4 - 2 )"))
+       5 3 4 2 - ^ *
+    """
+
     prec = {}
     prec["^"], prec["**"] = 4, 4
     prec["*"] = 3
@@ -38,9 +49,17 @@ def convertToPostfix(infixStr):
 
 
 def correctData(infixList):
-    """This is a bonus function. It cleans the data in such a way
+    """ This is a bonus function. It cleans the data in such a way
         so that it does not matter if you have spaces between the
-        operands and parentheses, or multi-digit numbers or both."""
+        operands and parentheses, or multi-digit numbers or both.
+
+        >>> print(convertToPostfix("A * BC + CD * D"))
+        A BC * CD D * +
+        >>> print(convertToPostfix("(A + B) * C - (D - E) * (FO + GI)"))
+        A B + C * D E - FO GI + * -
+        >>> print(convertToPostfix("5 * 32 ^ (444 - 22)"))
+        5 32 444 22 - ^ *
+    """
 
     for index, token in enumerate(infixList):
         if len(token) > 1 and (not token.isalnum()) and token != "**":
