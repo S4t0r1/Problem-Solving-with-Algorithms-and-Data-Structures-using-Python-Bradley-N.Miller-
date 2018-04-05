@@ -2,7 +2,7 @@ from pythonds.basic.stack import Stack
 
 def convertToPostfix(infixStr):
     prec = {}
-    prec["^"] = 4
+    prec["^"], prec["**"] = 4, 4
     prec["*"] = 3
     prec["/"] = 3
     prec["+"] = 2
@@ -14,7 +14,7 @@ def convertToPostfix(infixStr):
     correctData(infixList)
 
     for token in infixList:
-        if len(token) > 1:
+        if len(token) > 1 and token.isalnum():
             postfixList.append(token)
             continue
         if token in "0123456789ABCDEFGHIJKLMNOPRSTUVWXYZ":
@@ -43,7 +43,7 @@ def correctData(infixList):
         operands and parentheses, or multi-digit numbers or both."""
 
     for index, token in enumerate(infixList):
-        if len(token) > 1 and (not token.isalnum()):
+        if len(token) > 1 and (not token.isalnum()) and token != "**":
             if len(token) >= 3:
                 rear_index = index + token.index(token[-1])
                 newindex, i = (rear_index, -1) if token[:-1].isalnum() else (index, +1)
@@ -64,3 +64,4 @@ print(convertToPostfix("5 * 3 ^ ( 4 - 2 )"))
 print(convertToPostfix("A * BC + CD * D"))
 print(convertToPostfix("(A + B) * C - (D - E) * (FO + GI)"))
 print(convertToPostfix("5 * 32 ^ (444 - 22)"))
+print(convertToPostfix("5 * 32 ** (444 - 22)"))
