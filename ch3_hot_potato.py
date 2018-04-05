@@ -9,8 +9,10 @@ def num_input():
     return random.randint(1, 20)
 
 
-def hot_potato(nameslst, num=num_input()):
+def hot_potato(nameslst, num=None):
     circle = Queue()
+    if not num:
+        num = num_input()
     print("counter is %d" % (num))
     for name in nameslst:
         circle.enqueue(name)
