@@ -26,3 +26,4 @@ def hot_potato(nameslst, num=None):
 
 nameslst = ["Jan", "Anna", "Peter", "Zuzana", "Martin", "Dominika"]
 print(hot_potato(nameslst))
+print(hot_potato(nameslst, 7))
