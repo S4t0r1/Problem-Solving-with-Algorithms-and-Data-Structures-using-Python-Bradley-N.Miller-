@@ -1,3 +1,4 @@
+
 import math, string
 
 
@@ -146,29 +147,23 @@ def manage_sets(*args):
         setsKeysStr = " ".join(item[0] for item in setsList)
         setsCountList = [item[1] for item in setsList]
         print(setsCountList)
-        for cell_set in setsCountList:
-            if setsCountList.count(cell_set) > 1:
-                dupset = cell_set
-                print("DUPSET", dupset)
-                for index, cell_set_ in enumerate(setsCountList):
-                    batch = setsKeysStr.split()[index]
-                    if cell_set_ != dupset:
-                        if dupset.issubset(cell_set_):
-                            cell_set_ = cell_set_ - dupset
+        dupset = [s for s in setsCountList if setsCountList.count(s) == len(s)]
+        if dupset:
+            dupset = dupset[0]
+            for index, cell_set_ in enumerate(setsCountList):
+                batch = setsKeysStr.split()[index]
+                if cell_set_ != dupset:
+                    if dupset.issubset(cell_set_):
+                        cell_set_ = cell_set_ - dupset
+                        cell_data[batch] = cell_set_, cell_data[batch][1], cell_data[batch][2]
+                        return cell_data
+                    else:
+                        pairNumLst = list(cell_set_) + list(dupset)
+                        removenums = {num for num in pairNumLst if pairNumLst.count(num) == len(dupset)}
+                        if removenums:
+                            cell_set_ = cell_set_ - removenums
                             cell_data[batch] = cell_set_, cell_data[batch][1], cell_data[batch][2]
-                            print("changed subset", setsCountList)
                             return cell_data
-                        if dupset.issuperset(cell_set_):
-                            for num_s in cell_set_:
-                                for otherset_ in setsCountList:
-                                    if num_s not in otherset_:
-                                        magicnum = num_s
-                            for num_d in dupset:
-                                if num_d in cell_set_ and num_d != magicnum:
-                                    cell_set_.remove(num_d)
-                                    cell_data[batch] = cell_set_, cell_data[batch][1], cell_data[batch][2]
-                                    print("changed superset", setsCountList)
-                                    return cell_data
     return cell_data
 
 
