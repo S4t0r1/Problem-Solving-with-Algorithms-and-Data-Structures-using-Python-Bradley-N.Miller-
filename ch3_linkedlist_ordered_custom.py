@@ -1,4 +1,5 @@
 
+
 class Node:
     def __init__(self, item):
         self.data = item
@@ -51,6 +52,8 @@ class OrderedList:
         print("self.head {}\nself.tail {}\nlist size {}\n".format(
                  None if self.head is None else self.head.getData(),
                  None if self.tail is None else self.tail.getData(), self.length))
+        for key, value in sorted(self.indexDataDict.items()):
+            print("index {} : number {}".format(key, value))
 
     def isEmpty(self):
         return self.head is None
@@ -88,7 +91,6 @@ class OrderedList:
                 temp.setNext(current)
                 previous.setNext(temp)
             self.itemsDataDict[item] = [temp, position]
-            self.indexDataDict[position] = item
             self.length += 1
             self.__updateDataDictAdd(self.itemsDataDict[item])
 
@@ -106,6 +108,11 @@ class OrderedList:
                     node.setPrevious(addedNode)
             elif node.getNextData() == addednum > num:
                 addedNode.setPrevious(node)
+
+        self.__updateIndexDataDict()
+
+    def __updateIndexDataDict(self):
+        self.indexDataDict = {v[1]: k for k, v in self.itemsDataDict.items()}
 
     def __updateDataDictPop(self, index):
         try:
@@ -128,13 +135,16 @@ class OrderedList:
             elif num < removenum == node.getNextData():
                 node.setNext(node.getNext().getNext())
 
+        del self.indexDataDict[self.index(removenum)]
+        del self.itemsDataDict[removenum]
+        self.__updateIndexDataDict()
+
     def remove(self, item):
         if self.itemData(item):
             if self.length > 1 and item  == self.tail.getData():
                 self.pop(fromremove=True)
             else:
                 self.__updateDataDictRemove(item)
-                del self.itemsDataDict[item]
                 self.length -= 1
 
     def pop(self, index=None, fromremove=None):
@@ -144,16 +154,16 @@ class OrderedList:
             previtem, popnum = popitem.getPrevious(), popitem.getData()
             if popitem == self.tail:
                 previtem.setNext(popitem.getNext())
+            del self.indexDataDict[self.index(popnum)]
             del self.itemsDataDict[popnum]
             self.length -= 1
-            
+
             self.head = None if self.length == 0 else self.head
             self.tail = None if self.length < 2 else self.tail.getPrevious()
         else:
             assert (0 <= index < self.length), "Use only existing index positions !"
             popnum = self.__updateDataDictPop(index)
             if popnum is not None:
-                del self.itemsDataDict[popnum]
                 self.length -= 1
         if not fromremove:
             return popnum
